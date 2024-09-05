@@ -1,4 +1,5 @@
 name: Deploy React
+
 on:
   push:
     branches: [ "main", "deploy" ]
@@ -29,7 +30,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_KEY }}
+          key: ${{ secrets.PRIVATE_KEY }}
           # 서버에 파일만 배포
           source: dist/*
           target: /home/ubuntu/deploy/dist/
