@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -14,6 +14,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import styled from 'styled-components';
 import axios from 'axios';
+import { AuthProvider, useAuth } from './context/AuthContext'; // AuthProvider 및 useAuth 가져오기
 
 const Container = styled.div`
   display: flex;
@@ -33,7 +34,7 @@ const Container = styled.div`
 `;
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn, setIsLoggedIn } = useAuth(); // AuthContext에서 로그인 상태 가져오기
   const location = useLocation(); // 현재 페이지 위치를 확인하는 훅
 
   // 페이지가 변경될 때마다 세션 체크
@@ -46,7 +47,7 @@ const App = () => {
             withCredentials: true,
           }
         );
-        // Boolean 값인 response.data를 사용
+        // Boolean 값인 response.data를 사용하여 로그인 상태 설정
         if (response.data) {
           setIsLoggedIn(true); // 세션이 존재하면 로그인 상태로 설정
         } else {
@@ -59,7 +60,7 @@ const App = () => {
     };
 
     checkSession(); // 페이지 변경 시마다 세션 체크
-  }, [location]); // location이 변경될 때마다 useEffect가 실행됨
+  }, [location, setIsLoggedIn]); // location이 변경될 때마다 useEffect가 실행됨
 
   return (
     <Container>
@@ -77,9 +78,11 @@ const App = () => {
 };
 
 const AppWrapper = () => (
-  <Router>
-    <App />
-  </Router>
+  <AuthProvider>
+    <Router>
+      <App />
+    </Router>
+  </AuthProvider>
 );
 
 export default AppWrapper;

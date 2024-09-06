@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext'; // AuthContext에서 useAuth 가져오기
 
 const FooterContainer = styled.footer`
   width: 100%; /* 부모 컨테이너의 너비를 꽉 채움 */
@@ -46,7 +47,8 @@ const FooterButton = styled.button`
   }
 `;
 
-const Footer = ({ isLoggedIn }) => {
+const Footer = () => {
+  const { isLoggedIn, setIsLoggedIn } = useAuth(); // useAuth로 로그인 상태 관리
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
@@ -65,7 +67,8 @@ const Footer = ({ isLoggedIn }) => {
         { withCredentials: true }
       );
       if (response.status === 200) {
-        window.location.reload();
+        setIsLoggedIn(false); // 로그아웃 시 로그인 상태 업데이트
+        navigate('/'); // 로그아웃 후 홈으로 리다이렉트
       } else {
         console.error('로그아웃 실패:', response.data);
       }

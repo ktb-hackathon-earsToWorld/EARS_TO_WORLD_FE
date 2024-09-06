@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext'; // AuthContext에서 useAuth 가져오기
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -98,6 +99,7 @@ const Title = styled.h2`
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const { setIsLoggedIn, setMemberId } = useAuth(); // AuthContext를 통해 로그인 상태와 memberId 설정
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -114,6 +116,8 @@ const LoginPage = () => {
       );
 
       if (response.status === 200) {
+        setIsLoggedIn(true); // 로그인 성공 시 상태 업데이트
+        setMemberId(response.data.memberId); // response에서 memberId 설정
         navigate('/received-audio'); // 로그인 성공 후 리다이렉트
       } else {
         alert('로그인에 실패했습니다.');

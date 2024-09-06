@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
+import { useAuth } from '../context/AuthContext'; // useAuth 훅을 통해 전역 상태 가져오기
 
 const Container = styled.div`
   display: flex;
@@ -73,33 +73,48 @@ const DownloadButton = styled.button`
 `;
 
 const ReceivedAudioPage = () => {
+  const { memberId } = useAuth(); // 전역적으로 관리되는 memberId 가져오기
   const [audioUrl, setAudioUrl] = useState(null);
   const [message, setMessage] = useState('아직 도착한 음성 파일이 없습니다!');
+  const audioRef = useRef(null); // 오디오 태그 참조를 위한 useRef 생성
 
   useEffect(() => {
-    const fetchAudioFile = async () => {
-      try {
-        const response = await axios.get('http://13.125.130.243/api/audio', {
-          params: { loginId: '1234' }, // 서버에서 특정 사용자에게 음성 파일을 전송하도록 요청
-        });
+    if (!memberId) {
+      setMessage('로그인이 필요합니다.');
+      return;
+    }
 
-        if (response.data && response.data.audioUrl) {
-          setAudioUrl(response.data.audioUrl); // 서버에서 받은 음성 파일 URL
-          setMessage('새로운 음성 파일이 도착했습니다!');
-        } else {
-          setMessage('아직 도착한 음성 파일이 없습니다!');
-        }
-      } catch (error) {
-        console.error('오류가 발생했습니다:', error);
-        setMessage('오류가 발생했습니다.');
+    const eventSource = new EventSource(
+      `http://13.125.130.243/api/subscribe/${memberId}`
+    );
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.voiceRecordUrl) {
+        setAudioUrl(data.voiceRecordUrl);
+        setMessage('새로운 음성 파일이 도착했습니다!');
       }
     };
 
-    // 서버로부터 음성 파일을 가져오는 요청 (5초 후 음성 파일을 수신)
-    const timeoutId = setTimeout(fetchAudioFile, 5000);
+    eventSource.onerror = (error) => {
+      console.error('SSE 연결 오류:', error);
+      setMessage('오류가 발생했습니다.');
+      eventSource.close(); // SSE 연결 종료
+    };
 
-    return () => clearTimeout(timeoutId); // 컴포넌트 언마운트 시 타이머 제거
-  }, []);
+    return () => {
+      eventSource.close(); // 컴포넌트 언마운트 시 SSE 연결 종료
+    };
+  }, [memberId]);
+
+  // 새로운 음성 파일이 도착했을 때 자동으로 1회 재생
+  useEffect(() => {
+    if (audioUrl && audioRef.current) {
+      audioRef.current.play().catch((error) => {
+        console.error('자동 재생 실패:', error);
+      });
+    }
+  }, [audioUrl]);
 
   const handleDownload = () => {
     if (audioUrl) {
@@ -119,7 +134,7 @@ const ReceivedAudioPage = () => {
         <Title>{message}</Title>
         {audioUrl && (
           <>
-            <AudioMessage controls src={audioUrl} />
+            <AudioMessage controls src={audioUrl} ref={audioRef} />
             <DownloadButton onClick={handleDownload}>다운로드</DownloadButton>
           </>
         )}
