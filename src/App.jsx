@@ -63,7 +63,7 @@ const App = () => {
 
   return (
     <Container>
-      <Header isLoggedIn={isLoggedIn} /> {/* 헤더는 공통 레이아웃을 꽉 채움 */}
+      <Header /> {/* 헤더는 공통 레이아웃을 꽉 채움 */}
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/text-to-audio' element={<TextToAudioPage />} />
@@ -71,7 +71,7 @@ const App = () => {
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<RegisterPage />} />
       </Routes>
-      <Footer /> {/* 푸터도 공통 레이아웃을 꽉 채움 */}
+      <Footer isLoggedIn={isLoggedIn} /> {/* 푸터도 공통 레이아웃을 꽉 채움 */}
     </Container>
   );
 };
