@@ -244,7 +244,7 @@ const Home = () => {
     if (userId.trim()) {
       try {
         const response = await axios.post(
-          'http://13.125.130.243/api/audio?receiveLoginId=${userId}',
+          `http://13.125.130.243/api/audio?receiveLoginId=${userId}`,
           {
             voidRecordUrl: convertedFile, // 변환된 파일 URL
           }
