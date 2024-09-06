@@ -89,10 +89,18 @@ const ReceivedAudioPage = () => {
     );
 
     eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.voiceRecordUrl) {
-        setAudioUrl(data.voiceRecordUrl);
-        setMessage('새로운 음성 파일이 도착했습니다!');
+      try {
+        console.log('Received event:', event.data); // 서버로부터 받은 데이터를 확인
+        const data = JSON.parse(event.data); // JSON 형식인지 확인 후 파싱
+        if (data.voiceRecordUrl) {
+          setAudioUrl(data.voiceRecordUrl);
+          setMessage('새로운 음성 파일이 도착했습니다!');
+        } else {
+          console.warn('voiceRecordUrl이 없습니다.', data); // 데이터 형식 문제 확인
+        }
+      } catch (error) {
+        console.error('JSON 파싱 오류:', error); // 파싱 실패 시 오류 처리
+        setMessage('데이터 처리 중 오류가 발생했습니다.');
       }
     };
 
@@ -134,7 +142,11 @@ const ReceivedAudioPage = () => {
         <Title>{message}</Title>
         {audioUrl && (
           <>
-            <AudioMessage controls src={audioUrl} ref={audioRef} />
+            <AudioMessage
+              controls
+              src={`https://like-lion-dynamo.s3.amazonaws.com/${audioUrl}`}
+              ref={audioRef}
+            />
             <DownloadButton onClick={handleDownload}>다운로드</DownloadButton>
           </>
         )}
