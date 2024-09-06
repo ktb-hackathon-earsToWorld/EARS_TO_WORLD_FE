@@ -226,9 +226,9 @@ const TextToAudio = () => {
     if (userId.trim()) {
       try {
         const response = await axios.post(
-          `http://13.125.130.243/api/audio?receiveLoginId=${userId}`,
+          `http://13.125.130.243/api/audio?receiveLoginId=${userId}`, // 템플릿 리터럴로 수정
           {
-            voidRecordUrl: convertedFile, // 변환된 파일 URL
+            voiceRecordUrl: convertedFile, // voidRecordUrl -> voiceRecordUrl로 수정
           }
         );
 
