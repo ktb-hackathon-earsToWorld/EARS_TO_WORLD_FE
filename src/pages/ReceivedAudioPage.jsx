@@ -88,7 +88,7 @@ const ReceivedAudioPage = () => {
       `http://13.125.130.243/api/subscribe/${memberId}`
     );
 
-    eventSource.onmessage = (event) => {
+    eventSource.addEventListener('message', (event) => {
       try {
         console.log('Received event:', event.data); // 서버로부터 받은 데이터를 확인
         const data = JSON.parse(event.data); // JSON 형식인지 확인 후 파싱
@@ -102,7 +102,7 @@ const ReceivedAudioPage = () => {
         console.error('JSON 파싱 오류:', error); // 파싱 실패 시 오류 처리
         setMessage('데이터 처리 중 오류가 발생했습니다.');
       }
-    };
+    });
 
     eventSource.onerror = (error) => {
       console.error('SSE 연결 오류:', error);
