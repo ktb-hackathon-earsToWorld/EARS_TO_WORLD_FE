@@ -8,19 +8,30 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  margin-top: 10rem;
+  padding: 2rem;
+  height: 100vh;
+  max-height: calc(100vw * (740 / 360));
+  min-height: 740px;
+  width: calc(100vh * (360 / 740));
+  max-width: 100vw;
+  min-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #f5f5f5;
+  box-sizing: border-box;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  width: 23rem;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 23rem;
   padding: 2rem;
   border: 1px solid #ccc;
   border-radius: 0.5rem;
   background-color: #fff;
+  box-sizing: border-box;
 `;
 
 const Input = styled.input`
@@ -28,6 +39,8 @@ const Input = styled.input`
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
 
   &:focus {
     outline: none;
@@ -46,6 +59,21 @@ const RegisterButton = styled.button`
 
   &:hover {
     background-color: #004494;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+`;
+
+const Title = styled.h2`
+  font-size: 1.75rem;
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
   }
 `;
 
@@ -83,7 +111,7 @@ const RegisterPage = () => {
 
   return (
     <Container>
-      <h2>회원가입</h2>
+      <Title>회원가입</Title>
       <Form onSubmit={handleSubmit}>
         <Input
           type='text'

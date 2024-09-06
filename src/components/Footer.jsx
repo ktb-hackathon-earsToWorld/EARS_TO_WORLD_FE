@@ -1,21 +1,88 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const FooterContainer = styled.footer`
-  margin-top: auto;
-  padding: 1.25rem;
-  font-size: 0.875rem;
-  color: #666;
-  text-align: center;
+  width: 100%; /* 부모 컨테이너의 너비를 꽉 채움 */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 1rem;
+  background-color: #0057b7;
+  box-sizing: border-box;
+`;
+
+const FooterNavLink = styled(Link)`
+  font-size: 1.2rem;
+  color: white;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 
   @media (max-width: 768px) {
-    font-size: 0.75rem;
+    font-size: 1rem;
   }
 `;
 
-const Footer = () => {
+const FooterButton = styled.button`
+  font-size: 1.2rem;
+  padding: 0.625rem 1.25rem;
+  background-color: #ff6464;
+  border: none;
+  color: white;
+  border-radius: 0.3125rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #ff4c4c;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+`;
+
+const Footer = ({ isLoggedIn }) => {
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    if (isLoggedIn) {
+      handleLogout();
+    } else {
+      navigate('/login');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(
+        '/api/logout',
+        {},
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        window.location.reload();
+      } else {
+        console.error('로그아웃 실패:', response.data);
+      }
+    } catch (error) {
+      console.error('로그아웃 오류:', error);
+    }
+  };
+
   return (
-    <FooterContainer>© 2024 귀로보는세상 - 모두를 위한 접근성</FooterContainer>
+    <FooterContainer>
+      <FooterNavLink to='/'>파일 변환</FooterNavLink>
+      <FooterNavLink to='/text-to-audio'>텍스트 변환</FooterNavLink>
+      <FooterNavLink to='/received-audio'>받은 파일</FooterNavLink>
+      <FooterButton onClick={handleLoginClick}>
+        {isLoggedIn ? '로그아웃' : '로그인'}
+      </FooterButton>
+    </FooterContainer>
   );
 };
 
