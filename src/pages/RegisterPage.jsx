@@ -93,12 +93,15 @@ const RegisterPage = () => {
 
     try {
       const response = await axios.post(
-        '/api/register',
-        { username, password },
+        'http://13.125.130.243/api/join',
+        {
+          loginId: username, // loginId 필드에 username 값 할당
+          password: password, // password 필드 그대로 사용
+        },
         { withCredentials: true } // 세션 쿠키를 포함
       );
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         alert('회원가입이 완료되었습니다.');
         navigate('/login'); // 회원가입 후 로그인 페이지로 이동
       } else {

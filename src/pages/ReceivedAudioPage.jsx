@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -76,13 +77,26 @@ const ReceivedAudioPage = () => {
   const [message, setMessage] = useState('아직 도착한 음성 파일이 없습니다!');
 
   useEffect(() => {
-    // 5초 후에 예시 음성 파일 도착
-    const timeoutId = setTimeout(() => {
-      setAudioUrl(
-        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
-      ); // 예시 음성 파일 URL
-      setMessage('새로운 음성 파일이 도착했습니다!');
-    }, 5000); // 5초 후에 음성 파일이 도착한 것으로 설정
+    const fetchAudioFile = async () => {
+      try {
+        const response = await axios.get('http://13.125.130.243/api/audio', {
+          params: { loginId: '1234' }, // 서버에서 특정 사용자에게 음성 파일을 전송하도록 요청
+        });
+
+        if (response.data && response.data.audioUrl) {
+          setAudioUrl(response.data.audioUrl); // 서버에서 받은 음성 파일 URL
+          setMessage('새로운 음성 파일이 도착했습니다!');
+        } else {
+          setMessage('아직 도착한 음성 파일이 없습니다!');
+        }
+      } catch (error) {
+        console.error('오류가 발생했습니다:', error);
+        setMessage('오류가 발생했습니다.');
+      }
+    };
+
+    // 서버로부터 음성 파일을 가져오는 요청 (5초 후 음성 파일을 수신)
+    const timeoutId = setTimeout(fetchAudioFile, 5000);
 
     return () => clearTimeout(timeoutId); // 컴포넌트 언마운트 시 타이머 제거
   }, []);

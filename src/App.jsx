@@ -40,13 +40,17 @@ const App = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await axios.get('/api/check-session', {
-          withCredentials: true,
-        });
-        if (response.status === 200 && response.data.isLoggedIn) {
-          setIsLoggedIn(true);
+        const response = await axios.get(
+          'http://13.125.130.243/api/check-session',
+          {
+            withCredentials: true,
+          }
+        );
+        // Boolean 값인 response.data를 사용
+        if (response.data) {
+          setIsLoggedIn(true); // 세션이 존재하면 로그인 상태로 설정
         } else {
-          setIsLoggedIn(false);
+          setIsLoggedIn(false); // 세션이 없으면 로그아웃 상태로 설정
         }
       } catch (error) {
         console.error('세션 확인 오류:', error);

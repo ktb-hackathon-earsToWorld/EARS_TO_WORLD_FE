@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import axios from 'axios'; // axios 추가
 import styled from 'styled-components';
-import { PacmanLoader } from 'react-spinners'; // Packman spinner 사용
+import { PacmanLoader } from 'react-spinners'; // PackmanLoader 사용
 
 // 모달 스타일 정의
 const ModalOverlay = styled.div`
@@ -209,15 +210,29 @@ const Home = () => {
     }
   };
 
-  const handleConvert = () => {
+  const handleConvert = async () => {
     if (file) {
       setIsConverting(true);
-      setTimeout(() => {
-        setConvertedFile(
-          'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+      const imageFile = new FormData();
+      imageFile.append('file', file);
+
+      try {
+        const response = await axios.post(
+          'http://13.125.130.243/api/ear-to-world',
+          imageFile,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
         );
+
+        setConvertedFile(response.data.audioUrl); // 서버에서 반환된 파일 URL을 사용
+      } catch (error) {
+        console.error('변환 실패:', error);
+      } finally {
         setIsConverting(false);
-      }, 3000);
+      }
     }
   };
 
@@ -225,10 +240,27 @@ const Home = () => {
     setIsModalOpen(true); // 모달 열기
   };
 
-  const handleConfirmSend = () => {
+  const handleConfirmSend = async () => {
     if (userId.trim()) {
-      alert(`${userId}에게 파일을 전달했습니다!`);
-      setIsModalOpen(false);
+      try {
+        const response = await axios.post(
+          'http://13.125.130.243/api/audio?receiveLoginId=${userId}',
+          {
+            voidRecordUrl: convertedFile, // 변환된 파일 URL
+          }
+        );
+
+        if (response.status === 200) {
+          alert(`${userId}에게 파일을 전달했습니다!`);
+        } else {
+          alert('파일 전송에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('파일 전송 실패:', error);
+        alert('파일 전송 중 오류가 발생했습니다.');
+      } finally {
+        setIsModalOpen(false);
+      }
     } else {
       alert('사용자 아이디를 입력해주세요.');
     }

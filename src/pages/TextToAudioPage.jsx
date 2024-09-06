@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import { PacmanLoader } from 'react-spinners'; // PacmanLoader 사용
 
@@ -199,27 +200,49 @@ const TextToAudio = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState('');
 
-  const handleConvert = () => {
+  // 변환 로직
+  const handleConvert = async () => {
     if (text.trim()) {
       setIsConverting(true);
-      setTimeout(() => {
-        setIsConverting(false);
-        setIsConverted(true);
-        setConvertedFile(
-          'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' // 변환된 파일 URL
+      try {
+        const response = await axios.post(
+          'http://13.125.130.243/api/ear-to-world/text',
+          {
+            text: text,
+          }
         );
-      }, 3000); // 3초 동안 변환 중 상태 유지
+        setConvertedFile(response.data.audioUrl); // 서버에서 반환된 오디오 파일 URL
+        setIsConverted(true);
+      } catch (error) {
+        console.error('오디오 변환 실패:', error);
+      } finally {
+        setIsConverting(false);
+      }
     }
   };
 
-  const handleSend = () => {
-    setIsModalOpen(true); // 모달 열기
-  };
-
-  const handleConfirmSend = () => {
+  // 파일 전송 로직
+  const handleConfirmSend = async () => {
     if (userId.trim()) {
-      alert(`${userId}에게 파일을 전달했습니다!`);
-      setIsModalOpen(false);
+      try {
+        const response = await axios.post(
+          'http://13.125.130.243/api/audio?receiveLoginId=${userId}',
+          {
+            voidRecordUrl: convertedFile, // 변환된 파일 URL
+          }
+        );
+
+        if (response.status === 200) {
+          alert(`${userId}에게 파일을 전달했습니다!`);
+        } else {
+          alert('파일 전송에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('파일 전송 실패:', error);
+        alert('파일 전송 중 오류가 발생했습니다.');
+      } finally {
+        setIsModalOpen(false);
+      }
     } else {
       alert('사용자 아이디를 입력해주세요.');
     }
@@ -262,7 +285,9 @@ const TextToAudio = () => {
             <AudioPlayer controls src={convertedFile} />
           </AudioWrapper>
           <ButtonGroup>
-            <SendButton onClick={handleSend}>전달하기</SendButton>
+            <SendButton onClick={() => setIsModalOpen(true)}>
+              전달하기
+            </SendButton>
             <ResetButton onClick={handleReset}>다시 시작하기</ResetButton>
           </ButtonGroup>
         </ResultContainer>

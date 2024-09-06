@@ -105,8 +105,11 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post(
-        '/api/login',
-        { username, password },
+        'http://13.125.130.243/api/login',
+        {
+          loginId: username, // loginId 필드에 username 값 할당
+          password: password, // password 필드 그대로 사용
+        },
         { withCredentials: true } // 세션 쿠키를 포함
       );
 

@@ -60,7 +60,7 @@ const Footer = ({ isLoggedIn }) => {
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        '/api/logout',
+        'http://13.125.130.243/api/logout',
         {},
         { withCredentials: true }
       );
