@@ -307,7 +307,10 @@ const Home = () => {
         <ResultContainer>
           <AudioWrapper>
             <Title>변환이 완료되었습니다!</Title>
-            <AudioPlayer controls src={convertedFile} />
+            <AudioPlayer
+              controls
+              src={`https://like-lion-dynamo.s3.amazonaws.com/${convertedFile}`}
+            />
           </AudioWrapper>
           <ButtonGroup>
             <SendButton onClick={handleSend}>전달하기</SendButton>
