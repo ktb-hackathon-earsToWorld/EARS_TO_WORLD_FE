@@ -88,7 +88,7 @@ const ReceivedAudioPage = () => {
       `http://13.125.130.243/api/subscribe/${memberId}`
     );
 
-    eventSource.addEventListener('message', (event) => {
+    eventSource.addEventListener('alarm', (event) => {
       try {
         console.log('Received event:', event.data); // 서버로부터 받은 데이터를 확인
         const data = JSON.parse(event.data); // JSON 형식인지 확인 후 파싱
