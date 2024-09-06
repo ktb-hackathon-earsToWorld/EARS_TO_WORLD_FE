@@ -48,7 +48,7 @@ const FooterButton = styled.button`
 `;
 
 const Footer = () => {
-  const { isLoggedIn, setIsLoggedIn } = useAuth(); // useAuth로 로그인 상태 관리
+  const { isLoggedIn, setIsLoggedIn, setMemberId } = useAuth(); // useAuth로 로그인 상태와 memberId 관리
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
@@ -68,6 +68,7 @@ const Footer = () => {
       );
       if (response.status === 200) {
         setIsLoggedIn(false); // 로그아웃 시 로그인 상태 업데이트
+        setMemberId(null); // 로그아웃 시 memberId 초기화
         navigate('/'); // 로그아웃 후 홈으로 리다이렉트
       } else {
         console.error('로그아웃 실패:', response.data);
