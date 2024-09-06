@@ -213,14 +213,14 @@ const Home = () => {
   const handleConvert = async () => {
     if (file) {
       setIsConverting(true);
-      const imageFile = new FormData();
-      imageFile.append('file', file);
+      const formData = new FormData();
+      formData.append('imageFile', file);
 
       try {
         const response = await axios.post(
           'http://13.125.130.243/api/ear-to-world',
           {
-            imageFile: imageFile,
+            formData,
             headers: {
               'Content-Type': 'multipart/form-data',
             },
