@@ -211,7 +211,7 @@ const TextToAudio = () => {
             text: text,
           }
         );
-        setConvertedFile(response.data.audioUrl); // 서버에서 반환된 오디오 파일 URL
+        setConvertedFile(response.data); // 서버에서 반환된 오디오 파일 URL
         setIsConverted(true);
       } catch (error) {
         console.error('오디오 변환 실패:', error);

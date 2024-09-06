@@ -227,7 +227,7 @@ const Home = () => {
           }
         );
 
-        setConvertedFile(response.data.audioUrl); // 서버에서 반환된 파일 URL을 사용
+        setConvertedFile(response.data); // 서버에서 반환된 파일 URL을 사용
       } catch (error) {
         console.error('변환 실패:', error);
       } finally {
