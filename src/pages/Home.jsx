@@ -219,8 +219,8 @@ const Home = () => {
       try {
         const response = await axios.post(
           'http://13.125.130.243/api/ear-to-world',
-          imageFile,
           {
+            imageFile: imageFile,
             headers: {
               'Content-Type': 'multipart/form-data',
             },
