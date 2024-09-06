@@ -116,6 +116,7 @@ const LoginPage = () => {
       );
 
       if (response.status === 200) {
+        console.log('Response:', response.data);
         setIsLoggedIn(true); // 로그인 성공 시 상태 업데이트
         setMemberId(response.data.memberId); // response에서 memberId 설정
         navigate('/received-audio'); // 로그인 성공 후 리다이렉트
@@ -124,11 +125,12 @@ const LoginPage = () => {
       }
     } catch (error) {
       console.error('Login error:', error);
+      if (error.response && error.response.data) {
+        alert(`로그인 오류: ${error.response.data.message}`);
+      } else {
+        alert('알 수 없는 오류가 발생했습니다.');
+      }
     }
-  };
-
-  const handleRegisterClick = () => {
-    navigate('/register'); // 회원가입 페이지로 이동
   };
 
   return (
@@ -148,7 +150,7 @@ const LoginPage = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         <LoginButton type='submit'>로그인</LoginButton>
-        <RegisterButton type='button' onClick={handleRegisterClick}>
+        <RegisterButton type='button' onClick={() => navigate('/register')}>
           회원가입
         </RegisterButton>
       </Form>
